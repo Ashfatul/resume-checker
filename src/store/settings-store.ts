@@ -35,6 +35,7 @@ interface SettingsStore {
   ollamaUrl: string;
   hasConsented: boolean;
   isConfigured: boolean;
+  hasApiKey: boolean;
 
   setProvider: (provider: AIProvider) => void;
   setModel: (model: string) => void;
@@ -52,6 +53,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   ollamaUrl: "http://localhost:11434",
   hasConsented: false,
   isConfigured: false,
+  hasApiKey: false,
 
   hydrate: () => {
     const persisted = loadPersistedSettings();
@@ -59,6 +61,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     const isOllama = persisted.provider === "ollama";
     set({
       ...persisted,
+      hasApiKey: hasKey,
       isConfigured: persisted.provider !== null && (isOllama || hasKey),
     });
   },
@@ -112,7 +115,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     const encrypted = await encryptApiKey(key);
     localStorage.setItem(API_KEY_STORAGE_KEY, encrypted);
     const state = get();
-    set({ isConfigured: state.provider !== null });
+    set({ hasApiKey: true, isConfigured: state.provider !== null });
   },
 
   getApiKey: async () => {
@@ -137,6 +140,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       ollamaUrl: "http://localhost:11434",
       hasConsented: false,
       isConfigured: false,
+      hasApiKey: false,
     });
   },
 }));

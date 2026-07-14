@@ -53,7 +53,7 @@ export default function ResultsPage() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <div className="mx-auto max-w-xl px-4 py-8">
+        <div className="mx-auto max-w-2xl px-6 py-10 print:px-0 print:py-0 print:max-w-none">
           <div className="mb-6 flex items-center justify-between">
             <button
               onClick={handleNewReview}
@@ -65,13 +65,13 @@ export default function ResultsPage() {
           </div>
 
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Results</h1>
+            <h1 className="text-3xl font-bold">Results</h1>
             <Button variant="outline" size="sm" onClick={() => handlePrint()}>
               <Printer className="mr-1.5 h-3.5 w-3.5" /> Print
             </Button>
           </div>
 
-          <div ref={printRef} className="space-y-8 print:space-y-6">
+          <div ref={printRef} className="space-y-8 print:space-y-5 print:px-2">
             <div className="print:hidden flex justify-center">
               <ScoreOverview score={analysisResult.overallScore} label={scoreLabel} />
             </div>

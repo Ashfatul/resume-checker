@@ -13,7 +13,7 @@ import { ResumeInput } from "@/components/review/resume-input";
 import { useSettingsStore } from "@/store/settings-store";
 import { useReviewStore } from "@/store/review-store";
 import { PROVIDER_LABELS, ANALYSIS_STEPS } from "@/lib/constants";
-import { ArrowLeft, ArrowRight, Loader2, Settings } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Settings, AlertCircle, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -21,7 +21,7 @@ export default function ReviewPage() {
   const router = useRouter();
   const { provider, model, ollamaUrl, isConfigured, hydrate, getApiKey } = useSettingsStore();
   const {
-    jobDescription, resumeText, analysisStatus, analysisProgress,
+    jobDescription, resumeText, analysisStatus, analysisProgress, error,
     setJobDescription, setResumeText, setAnalysisResult, setAnalysisStatus,
     addProgress, setError,
   } = useReviewStore();
@@ -99,7 +99,9 @@ export default function ReviewPage() {
       clearInterval(progressInterval);
       const message = e instanceof Error ? e.message : "Analysis failed";
       setError(message);
-      toast.error(message);
+      toast.error("Analysis failed", {
+        description: message,
+      });
     } finally {
       setSubmitting(false);
     }
@@ -121,7 +123,7 @@ export default function ReviewPage() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <div className="mx-auto max-w-xl px-4 py-8">
+        <div className="mx-auto max-w-2xl px-6 py-10">
           <div className="mb-6 flex items-center justify-between">
             <Link
               href="/"
@@ -134,8 +136,8 @@ export default function ReviewPage() {
 
           <div className="space-y-6">
             <div>
-              <h1 className="text-2xl font-bold">Review Your Resume</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <h1 className="text-3xl font-bold tracking-tight">Review Your Resume</h1>
+              <p className="mt-2 text-base text-muted-foreground">
                 Provide the job description and your resume for analysis
               </p>
             </div>
@@ -164,6 +166,38 @@ export default function ReviewPage() {
                   >
                     <Settings className="h-3 w-3" /> Change
                   </Link>
+                </CardContent>
+              </Card>
+            )}
+
+            {error && (
+              <Card className="border-destructive/50 bg-destructive/5 dark:bg-destructive/10">
+                <CardContent className="py-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-destructive/10">
+                      <AlertCircle className="h-5 w-5 text-destructive" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-destructive">Analysis Failed</h4>
+                      <p className="mt-1 text-sm text-muted-foreground break-words">{error}</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex gap-2 ml-12">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setError(null)}
+                    >
+                      Dismiss
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => { setError(null); handleSubmit(); }}
+                    >
+                      <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Retry
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             )}

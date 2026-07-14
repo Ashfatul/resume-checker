@@ -6,11 +6,11 @@ import { ThemeToggle } from "./theme-toggle";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2 font-semibold text-foreground">
+    <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-6">
+        <Link href="/" className="flex items-center gap-2.5 font-semibold text-foreground">
           <FileCheck className="h-5 w-5 text-primary" />
-          <span>ResumeChecker</span>
+          <span className="text-base">ResumeChecker</span>
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />

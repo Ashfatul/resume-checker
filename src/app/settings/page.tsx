@@ -16,7 +16,7 @@ import Link from "next/link";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { provider, hasConsented, hydrate, saveApiKey, clearSettings } = useSettingsStore();
+  const { provider, hasConsented, hasApiKey, hydrate, saveApiKey, clearSettings } = useSettingsStore();
   const [saving, setSaving] = useState(false);
   const apiKeyRef = useRef<HTMLInputElement>(null);
 
@@ -38,12 +38,14 @@ export default function SettingsPage() {
     try {
       if (provider !== "ollama") {
         const key = apiKeyRef.current?.value?.trim();
-        if (!key) {
+        if (!key && !hasApiKey) {
           toast.error("Please enter your API key");
           setSaving(false);
           return;
         }
-        await saveApiKey(key);
+        if (key) {
+          await saveApiKey(key);
+        }
       }
       toast.success("Settings saved!");
       router.push("/review");
@@ -63,8 +65,8 @@ export default function SettingsPage() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <div className="mx-auto max-w-xl px-4 py-8">
-          <div className="mb-6 flex items-center justify-between">
+        <div className="mx-auto max-w-2xl px-6 py-10">
+          <div className="mb-8 flex items-center justify-between">
             <Link
               href="/"
               className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -76,8 +78,8 @@ export default function SettingsPage() {
 
           <div className="space-y-6">
             <div>
-              <h1 className="text-2xl font-bold">Settings</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+              <p className="mt-2 text-base text-muted-foreground">
                 Configure your AI provider to get started
               </p>
             </div>

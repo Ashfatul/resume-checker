@@ -26,9 +26,9 @@ export function FeedbackItem({ item, index }: FeedbackItemProps) {
           </div>
           <span className="text-xs text-muted-foreground">{item.category}</span>
         </div>
-        <h4 className="font-medium text-sm">{item.title}</h4>
-        <p className="text-sm text-muted-foreground">{item.description}</p>
-        <div className="flex items-start gap-2 rounded-md bg-background/50 p-2.5 text-sm">
+        <h4 className="font-medium">{item.title}</h4>
+        <p className="text-muted-foreground">{item.description}</p>
+        <div className="flex items-start gap-2 rounded-lg bg-background/50 p-3">
           <Lightbulb className="h-4 w-4 text-primary shrink-0 mt-0.5" />
           <span>{item.fix}</span>
         </div>

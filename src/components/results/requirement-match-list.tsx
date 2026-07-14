@@ -18,7 +18,7 @@ const statusConfig = {
 export function RequirementMatchList({ items }: RequirementMatchListProps) {
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         Requirement Match
       </h3>
       <Card>
@@ -33,7 +33,7 @@ export function RequirementMatchList({ items }: RequirementMatchListProps) {
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium">{item.requirement}</span>
                     {item.evidence && (
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.evidence}</p>
+                      <p className="text-sm text-muted-foreground mt-0.5">{item.evidence}</p>
                     )}
                   </div>
                 </div>

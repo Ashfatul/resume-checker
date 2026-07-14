@@ -18,7 +18,7 @@ const categoryLabels: Record<keyof AnalysisCategories, string> = {
 export function CategoryScores({ categories }: CategoryScoresProps) {
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         Category Breakdown
       </h3>
       <div className="space-y-3">
@@ -48,7 +48,7 @@ export function CategoryScores({ categories }: CategoryScoresProps) {
                   transition={{ duration: 1, delay: i * 0.15, ease: "easeOut" }}
                 />
               </div>
-              <p className="text-xs text-muted-foreground">{summary}</p>
+              <p className="text-sm text-muted-foreground">{summary}</p>
             </div>
           );
         })}

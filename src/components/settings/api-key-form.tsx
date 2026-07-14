@@ -8,11 +8,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useSettingsStore } from "@/store/settings-store";
 import { validateApiKey } from "@/lib/ai/providers";
 import { DEFAULT_MODELS } from "@/lib/constants";
-import { Eye, EyeOff, CheckCircle2, XCircle, Loader2, ExternalLink } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2, XCircle, Loader2, ExternalLink, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 export function ApiKeyForm({ apiKeyRef }: { apiKeyRef: React.RefObject<HTMLInputElement | null> }) {
-  const { provider, model, ollamaUrl, setModel, setOllamaUrl } = useSettingsStore();
+  const { provider, model, ollamaUrl, hasApiKey, setModel, setOllamaUrl } = useSettingsStore();
   const [apiKey, setApiKey] = useState("");
   const [showKey, setShowKey] = useState(false);
   const [validating, setValidating] = useState(false);
@@ -56,7 +56,7 @@ export function ApiKeyForm({ apiKeyRef }: { apiKeyRef: React.RefObject<HTMLInput
               onChange={(e) => setModel(e.target.value)}
               placeholder={DEFAULT_MODELS.ollama}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Enter the model name installed on your Ollama server
             </p>
           </div>
@@ -75,7 +75,7 @@ export function ApiKeyForm({ apiKeyRef }: { apiKeyRef: React.RefObject<HTMLInput
               </span>
             )}
           </div>
-          <p className="text-xs text-muted-foreground rounded-md bg-muted p-3">
+          <p className="text-sm text-muted-foreground rounded-lg bg-muted p-3">
             Ollama runs on your machine. No API key needed. No data leaves your computer at all.
           </p>
         </CardContent>
@@ -94,6 +94,14 @@ export function ApiKeyForm({ apiKeyRef }: { apiKeyRef: React.RefObject<HTMLInput
       <CardContent className="space-y-4 pt-6">
         <div className="space-y-2">
           <Label htmlFor="api-key">API Key</Label>
+          {hasApiKey && !apiKey && (
+            <div className="flex items-center gap-2 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/50 px-3 py-2.5">
+              <ShieldCheck className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
+              <span className="text-sm text-green-700 dark:text-green-300">
+                API key is saved and encrypted. Leave empty to keep current key, or enter a new one to replace it.
+              </span>
+            </div>
+          )}
           <div className="relative">
             <Input
               id="api-key"
@@ -101,7 +109,7 @@ export function ApiKeyForm({ apiKeyRef }: { apiKeyRef: React.RefObject<HTMLInput
               type={showKey ? "text" : "password"}
               value={apiKey}
               onChange={(e) => { setApiKey(e.target.value); setValidation(null); }}
-              placeholder={provider === "gemini" ? "AIza..." : "sk-..."}
+              placeholder={hasApiKey ? "Enter new key to replace saved key..." : (provider === "gemini" ? "AIza..." : "sk-...")}
               className="pr-10"
             />
             <button
@@ -114,7 +122,7 @@ export function ApiKeyForm({ apiKeyRef }: { apiKeyRef: React.RefObject<HTMLInput
           </div>
           {help && (
             <a href={help.url} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+              className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
               {help.label} <ExternalLink className="h-3 w-3" />
             </a>
           )}

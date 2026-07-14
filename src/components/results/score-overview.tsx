@@ -16,8 +16,8 @@ export function ScoreOverview({ score, label }: ScoreOverviewProps) {
     score >= 80 ? "text-green-500" : score >= 60 ? "text-yellow-500" : "text-red-500";
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      <div className="relative h-36 w-36">
+    <div className="flex flex-col items-center gap-4">
+      <div className="relative h-44 w-44">
         <svg className="h-full w-full -rotate-90" viewBox="0 0 120 120">
           <circle
             cx="60" cy="60" r={radius}
@@ -35,17 +35,17 @@ export function ScoreOverview({ score, label }: ScoreOverviewProps) {
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <motion.span
-            className={cn("text-3xl font-bold", color)}
+            className={cn("text-4xl font-bold", color)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
             {score}
           </motion.span>
-          <span className="text-xs text-muted-foreground">/ 100</span>
+          <span className="text-sm text-muted-foreground">/ 100</span>
         </div>
       </div>
-      <p className="text-sm font-medium text-muted-foreground">{label}</p>
+      <p className="text-base font-medium text-muted-foreground">{label}</p>
     </div>
   );
 }

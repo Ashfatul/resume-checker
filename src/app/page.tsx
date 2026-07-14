@@ -63,20 +63,20 @@ export default function LandingPage() {
       <Header />
       <main className="flex-1">
         {/* Hero */}
-        <section className="mx-auto max-w-3xl px-4 py-20 text-center">
+        <section className="mx-auto max-w-3xl px-6 py-24 text-center">
           <motion.div {...fadeUp}>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+            <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
               Check Your Resume
               <br />
-              <span className="text-primary">Like a Recruiter</span>
+              <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Like a Recruiter</span>
             </h1>
-            <p className="mx-auto mt-4 max-w-lg text-lg text-muted-foreground">
+            <p className="mx-auto mt-6 max-w-lg text-lg text-muted-foreground leading-relaxed">
               AI-powered ATS & recruiter analysis. Get scores, feedback, and a
               clear verdict. 100% private — your data never leaves your browser.
             </p>
-            <div className="mt-8">
+            <div className="mt-10">
               <Link href={ctaHref}>
-                <Button size="lg" className="text-base px-8">
+                <Button size="lg" className="text-base px-8 h-12 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-shadow">
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
@@ -85,10 +85,10 @@ export default function LandingPage() {
         </section>
 
         {/* How It Works */}
-        <section className="border-t border-border bg-muted/30 py-16">
-          <div className="mx-auto max-w-3xl px-4">
-            <h2 className="text-center text-2xl font-bold mb-10">How It Works</h2>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <section className="border-t border-border bg-muted/30 py-20">
+          <div className="mx-auto max-w-3xl px-6">
+            <h2 className="text-center text-3xl font-bold mb-12">How It Works</h2>
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
               {steps.map((step, i) => (
                 <motion.div
                   key={step.title}
@@ -97,12 +97,12 @@ export default function LandingPage() {
                   transition={{ delay: i * 0.1 }}
                   className="text-center"
                 >
-                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <step.icon className="h-5 w-5 text-primary" />
+                  <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+                    <step.icon className="h-6 w-6 text-primary" />
                   </div>
                   <div className="text-xs font-semibold text-primary mb-1">Step {i + 1}</div>
                   <h3 className="text-sm font-semibold">{step.title}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">{step.desc}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{step.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -110,9 +110,9 @@ export default function LandingPage() {
         </section>
 
         {/* Features */}
-        <section className="py-16">
-          <div className="mx-auto max-w-3xl px-4">
-            <h2 className="text-center text-2xl font-bold mb-10">What You Get</h2>
+        <section className="py-20">
+          <div className="mx-auto max-w-3xl px-6">
+            <h2 className="text-center text-3xl font-bold mb-12">What You Get</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {features.map((feature) => (
                 <Card key={feature.title}>
@@ -128,9 +128,9 @@ export default function LandingPage() {
         </section>
 
         {/* Privacy */}
-        <section className="border-t border-border bg-muted/30 py-16">
-          <div className="mx-auto max-w-3xl px-4">
-            <h2 className="text-center text-2xl font-bold mb-10">Privacy & Security</h2>
+        <section className="border-t border-border bg-muted/30 py-20">
+          <div className="mx-auto max-w-3xl px-6">
+            <h2 className="text-center text-3xl font-bold mb-12">Privacy & Security</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {privacyPoints.map((point) => (
                 <div key={point.text} className="flex items-start gap-3 p-4 rounded-lg bg-background border border-border">
@@ -143,9 +143,9 @@ export default function LandingPage() {
         </section>
 
         {/* Providers */}
-        <section className="py-16">
-          <div className="mx-auto max-w-3xl px-4">
-            <h2 className="text-center text-2xl font-bold mb-10">Supported Providers</h2>
+        <section className="py-20">
+          <div className="mx-auto max-w-3xl px-6">
+            <h2 className="text-center text-3xl font-bold mb-12">Supported Providers</h2>
             <div className="grid grid-cols-3 gap-4">
               {providers.map((p) => (
                 <Card key={p.name} className="text-center">
@@ -161,15 +161,15 @@ export default function LandingPage() {
         </section>
 
         {/* CTA */}
-        <section className="border-t border-border py-16 text-center">
-          <div className="mx-auto max-w-lg px-4">
-            <h2 className="text-2xl font-bold">Ready to improve your resume?</h2>
-            <p className="mt-2 text-muted-foreground">
+        <section className="border-t border-border py-20 text-center">
+          <div className="mx-auto max-w-lg px-6">
+            <h2 className="text-3xl font-bold">Ready to improve your resume?</h2>
+            <p className="mt-3 text-lg text-muted-foreground">
               Free, private, and open source. Get started in under a minute.
             </p>
-            <div className="mt-6">
+            <div className="mt-8">
               <Link href={ctaHref}>
-                <Button size="lg" className="text-base px-8">
+                <Button size="lg" className="text-base px-8 h-12 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-shadow">
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>

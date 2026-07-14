@@ -22,7 +22,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       {children}
-      <Toaster position="top-center" richColors />
+      <Toaster
+        position="top-center"
+        richColors
+        toastOptions={{
+          className: "!text-sm !rounded-xl !shadow-lg !border",
+          duration: 5000,
+        }}
+      />
     </ThemeProvider>
   );
 }

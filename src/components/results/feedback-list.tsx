@@ -33,7 +33,7 @@ export function FeedbackList({ items }: FeedbackListProps) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         Detailed Feedback
       </h3>
       <div className="flex flex-wrap gap-2">
