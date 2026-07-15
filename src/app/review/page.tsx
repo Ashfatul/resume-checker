@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Header } from "@/components/shared/header";
@@ -13,7 +14,7 @@ import { ResumeInput } from "@/components/review/resume-input";
 import { useSettingsStore } from "@/store/settings-store";
 import { useReviewStore } from "@/store/review-store";
 import { PROVIDER_LABELS, ANALYSIS_STEPS } from "@/lib/constants";
-import { ArrowLeft, ArrowRight, Loader2, Settings, AlertCircle, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Settings, AlertCircle, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -21,7 +22,7 @@ export default function ReviewPage() {
   const router = useRouter();
   const { provider, model, ollamaUrl, isConfigured, hydrate, getApiKey } = useSettingsStore();
   const {
-    jobDescription, resumeText, analysisStatus, analysisProgress, error,
+    jobDescription, jobDescriptionSource, resumeText, analysisStatus, analysisProgress, error,
     setJobDescription, setResumeText, setAnalysisResult, setAnalysisStatus,
     addProgress, setError,
   } = useReviewStore();
@@ -107,17 +108,6 @@ export default function ReviewPage() {
     }
   };
 
-  if (analysisStatus === "analyzing") {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <LoadingAnimation progress={analysisProgress} />
-        </main>
-        <Footer />
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -142,7 +132,11 @@ export default function ReviewPage() {
               </p>
             </div>
 
-            <JobInput value={jobDescription} onChange={setJobDescription} />
+            <JobInput
+              value={jobDescription}
+              source={jobDescriptionSource}
+              onChange={(text, source) => setJobDescription(text, source)}
+            />
             <ResumeInput
               value={resumeText}
               onChange={(text, source, fileName) => setResumeText(text, source, fileName)}
@@ -208,7 +202,6 @@ export default function ReviewPage() {
               className="w-full"
               size="lg"
             >
-              {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Analyze My Resume
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -216,6 +209,10 @@ export default function ReviewPage() {
         </div>
       </main>
       <Footer />
+
+      {analysisStatus === "analyzing" && (
+        <LoadingAnimation progress={analysisProgress} active={true} />
+      )}
     </div>
   );
 }

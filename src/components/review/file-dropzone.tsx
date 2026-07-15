@@ -2,61 +2,79 @@
 
 import { useCallback, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { validateFileType, validateFileSize, formatFileSize } from "@/lib/validators";
-import { MAX_FILE_SIZE, SUPPORTED_EXTENSIONS } from "@/lib/constants";
+import { validateFileSize, formatFileSize } from "@/lib/validators";
+import { MAX_FILE_SIZE } from "@/lib/constants";
 import { Upload, FileText, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface FileDropzoneProps {
   onFileParsed: (text: string, fileName: string) => void;
+  endpoint: string;
+  accept: string;
+  validate: (fileName: string) => boolean;
+  supportedLabel: string;
+  prompt: string;
 }
 
-export function FileDropzone({ onFileParsed }: FileDropzoneProps) {
+export function FileDropzone({
+  onFileParsed,
+  endpoint,
+  accept,
+  validate,
+  supportedLabel,
+  prompt,
+}: FileDropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [parsing, setParsing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = useCallback(async (file: File) => {
-    if (!validateFileType(file.name)) {
-      toast.error(`Unsupported file type. We support ${SUPPORTED_EXTENSIONS.join(", ")} files.`);
-      return;
-    }
-    if (!validateFileSize(file.size)) {
-      toast.error(`File must be under 5 MB. Your file is ${formatFileSize(file.size)}.`);
-      return;
-    }
-
-    setParsing(true);
-    setFileName(file.name);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/parse", { method: "POST", body: formData });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to parse file");
+  const handleFile = useCallback(
+    async (file: File) => {
+      if (!validate(file.name)) {
+        toast.error(`Unsupported file type. We support ${supportedLabel} files.`);
+        return;
+      }
+      if (!validateFileSize(file.size)) {
+        toast.error(`File must be under 5 MB. Your file is ${formatFileSize(file.size)}.`);
+        return;
       }
 
-      const data = await res.json();
-      onFileParsed(data.text, file.name);
-      toast.success(`Parsed ${file.name} (${data.wordCount} words)`);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to parse file");
-      setFileName(null);
-    } finally {
-      setParsing(false);
-    }
-  }, [onFileParsed]);
+      setParsing(true);
+      setFileName(file.name);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch(endpoint, { method: "POST", body: formData });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Failed to parse file");
+        }
+
+        const data = await res.json();
+        onFileParsed(data.text, file.name);
+        toast.success(`Parsed ${file.name} (${data.wordCount} words)`);
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Failed to parse file");
+        setFileName(null);
+      } finally {
+        setParsing(false);
+      }
+    },
+    [accept, endpoint, onFileParsed, supportedLabel, validate]
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    },
+    [handleFile]
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -82,7 +100,10 @@ export function FileDropzone({ onFileParsed }: FileDropzoneProps) {
 
   return (
     <div
-      onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragging(true);
+      }}
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
@@ -100,10 +121,10 @@ export function FileDropzone({ onFileParsed }: FileDropzoneProps) {
       )}
       <div>
         <p className="text-sm font-medium">
-          {parsing ? "Parsing file..." : "Drag & drop your resume"}
+          {parsing ? "Parsing file..." : prompt}
         </p>
         <p className="text-xs text-muted-foreground mt-1">
-          PDF, DOC, DOCX (max {formatFileSize(MAX_FILE_SIZE)})
+          {supportedLabel} (max {formatFileSize(MAX_FILE_SIZE)})
         </p>
       </div>
       {!parsing && (
@@ -112,7 +133,7 @@ export function FileDropzone({ onFileParsed }: FileDropzoneProps) {
       <input
         ref={inputRef}
         type="file"
-        accept=".pdf,.doc,.docx"
+        accept={accept}
         onChange={handleChange}
         className="hidden"
       />

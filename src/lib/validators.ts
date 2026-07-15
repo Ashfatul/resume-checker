@@ -1,8 +1,15 @@
-import { MAX_FILE_SIZE, MAX_TEXT_LENGTH, SUPPORTED_EXTENSIONS } from "./constants";
+import {
+  MAX_FILE_SIZE,
+  MAX_TEXT_LENGTH,
+  SUPPORTED_EXTENSIONS,
+  SUPPORTED_JOB_IMAGE_EXTENSIONS,
+} from "./constants";
+
+const ALL_UPLOAD_EXTENSIONS = [...SUPPORTED_EXTENSIONS, ...SUPPORTED_JOB_IMAGE_EXTENSIONS];
 
 export function validateFileType(fileName: string): boolean {
   const ext = fileName.toLowerCase().slice(fileName.lastIndexOf("."));
-  return SUPPORTED_EXTENSIONS.includes(ext);
+  return ALL_UPLOAD_EXTENSIONS.includes(ext);
 }
 
 export function validateFileSize(size: number): boolean {

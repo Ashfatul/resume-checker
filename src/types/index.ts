@@ -8,6 +8,8 @@ export type RequirementStatus = "matched" | "partial" | "missing";
 
 export type ResumeSource = "text" | "file" | "url";
 
+export type JobDescriptionSource = "text" | "file" | "url";
+
 export type AnalysisStatus = "idle" | "parsing" | "analyzing" | "complete" | "error";
 
 export interface CategoryScore {
@@ -74,6 +76,7 @@ export interface SettingsState {
 
 export interface ReviewState {
   jobDescription: string;
+  jobDescriptionSource: JobDescriptionSource | null;
   resumeText: string;
   resumeSource: ResumeSource;
   fileName: string | null;
@@ -83,7 +86,7 @@ export interface ReviewState {
   analysisProgress: string[];
   error: string | null;
 
-  setJobDescription: (text: string) => void;
+  setJobDescription: (text: string, source?: JobDescriptionSource) => void;
   setResumeText: (text: string, source: ResumeSource, fileName?: string) => void;
   setAnalysisResult: (result: AnalysisResult) => void;
   setAnalysisStatus: (status: AnalysisStatus) => void;

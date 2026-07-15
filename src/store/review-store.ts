@@ -1,8 +1,9 @@
 import { create } from "zustand";
-import type { AnalysisResult, AnalysisStatus, ResumeSource } from "@/types";
+import type { AnalysisResult, AnalysisStatus, JobDescriptionSource, ResumeSource } from "@/types";
 
 interface ReviewStore {
   jobDescription: string;
+  jobDescriptionSource: JobDescriptionSource | null;
   resumeText: string;
   resumeSource: ResumeSource;
   fileName: string | null;
@@ -12,7 +13,7 @@ interface ReviewStore {
   analysisProgress: string[];
   error: string | null;
 
-  setJobDescription: (text: string) => void;
+  setJobDescription: (text: string, source?: JobDescriptionSource) => void;
   setResumeText: (text: string, source: ResumeSource, fileName?: string) => void;
   setAnalysisResult: (result: AnalysisResult) => void;
   setAnalysisStatus: (status: AnalysisStatus) => void;
@@ -23,6 +24,7 @@ interface ReviewStore {
 
 export const useReviewStore = create<ReviewStore>((set) => ({
   jobDescription: "",
+  jobDescriptionSource: null,
   resumeText: "",
   resumeSource: "text",
   fileName: null,
@@ -32,7 +34,8 @@ export const useReviewStore = create<ReviewStore>((set) => ({
   analysisProgress: [],
   error: null,
 
-  setJobDescription: (text) => set({ jobDescription: text }),
+  setJobDescription: (text, source) =>
+    set({ jobDescription: text, jobDescriptionSource: source ?? "text" }),
 
   setResumeText: (text, source, fileName) =>
     set({ resumeText: text, resumeSource: source, fileName: fileName ?? null }),
@@ -45,11 +48,20 @@ export const useReviewStore = create<ReviewStore>((set) => ({
   addProgress: (message) =>
     set((state) => ({ analysisProgress: [...state.analysisProgress, message] })),
 
-  setError: (error) => set({ error, analysisStatus: error ? "error" : "idle" }),
+  setError: (error) =>
+    set((state) => ({
+      error,
+      analysisStatus: error
+        ? "error"
+        : state.analysisStatus === "error"
+        ? "idle"
+        : state.analysisStatus,
+    })),
 
   reset: () =>
     set({
       jobDescription: "",
+      jobDescriptionSource: null,
       resumeText: "",
       resumeSource: "text",
       fileName: null,

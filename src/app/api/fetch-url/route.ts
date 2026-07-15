@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import * as cheerio from "cheerio";
+import { JSDOM } from "jsdom";
 import { URL_FETCH_TIMEOUT, URL_MAX_SIZE } from "@/lib/constants";
 
 export async function POST(request: NextRequest) {
@@ -56,25 +56,92 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Page content is too large (2 MB limit)" }, { status: 413 });
     }
 
-    const html = await response.text();
-    const $ = cheerio.load(html);
+    let html = await response.text();
+
+    // JSDOM does not support <script type="module"> natively. 
+    // We rewrite them to standard deferred scripts so JSDOM can execute them.
+    html = html.replace(/\btype\s*=\s*['"]?module['"]?/gi, "defer");
+
+    const dom = new JSDOM(html, {
+      url: url,
+      runScripts: "dangerously",
+      resources: {
+        userAgent: "ResumeChecker/1.0 (Resume Content Fetcher)",
+      },
+      pretendToBeVisual: true,
+      beforeParse(window) {
+        // Mock window.matchMedia
+        window.matchMedia = window.matchMedia || function() {
+          return {
+            matches: false,
+            addListener: function() {},
+            removeListener: function() {},
+            addEventListener: function() {},
+            removeEventListener: function() {},
+            dispatchEvent: function() {}
+          };
+        };
+
+        // Mock IntersectionObserver
+        class IntersectionObserverMock {
+          observe() {}
+          unobserve() {}
+          disconnect() {}
+        }
+        // @ts-ignore
+        window.IntersectionObserver = window.IntersectionObserver || IntersectionObserverMock;
+
+        // Mock ResizeObserver
+        class ResizeObserverMock {
+          observe() {}
+          unobserve() {}
+          disconnect() {}
+        }
+        // @ts-ignore
+        window.ResizeObserver = window.ResizeObserver || ResizeObserverMock;
+      }
+    });
+
+    // Wait for client-side rendering (React/Next.js/etc.)
+    let elapsed = 0;
+    while (elapsed < 2000) {
+      const document = dom.window.document;
+      const bodyText = document.body?.textContent || "";
+      const hasRootContent = document.getElementById("root")?.children.length ?? 0;
+      const hasNextContent = document.getElementById("__next")?.children.length ?? 0;
+      const hasAppContent = document.getElementById("app")?.children.length ?? 0;
+
+      if (hasRootContent > 0 || hasNextContent > 0 || hasAppContent > 0 || bodyText.length > 500) {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      elapsed += 100;
+    }
+
+    const document = dom.window.document;
+    const title = document.title || "";
 
     // Remove non-content elements
-    $("script, style, nav, footer, header, aside, iframe, noscript, svg, form").remove();
-    $("[role='navigation'], [role='banner'], [role='contentinfo']").remove();
+    const elementsToRemove = document.querySelectorAll(
+      "script, style, nav, footer, header, aside, iframe, noscript, svg, form, [role='navigation'], [role='banner'], [role='contentinfo']"
+    );
+    elementsToRemove.forEach((el) => el.remove());
 
     // Try to get main content first, then fall back to body
-    let contentEl = $("main, article, [role='main']").first();
-    if (!contentEl.length) contentEl = $("body");
+    let contentEl = document.querySelector("main, article, [role='main']");
+    if (!contentEl) {
+      contentEl = document.body;
+    }
 
-    const title = $("title").text().trim();
-    const text = contentEl
-      .text()
+    const text = (contentEl?.textContent || "")
       .replace(/\s+/g, " ")
       .replace(/\n\s*\n/g, "\n")
       .trim();
 
     const wordCount = text.split(/\s+/).filter(Boolean).length;
+
+    // Clean up JSDOM window memory
+    dom.window.close();
 
     return NextResponse.json({ text, title, wordCount });
   } catch (error) {

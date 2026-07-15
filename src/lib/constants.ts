@@ -1,9 +1,10 @@
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 export const MAX_TEXT_LENGTH = 10_000;
 export const MAX_REQUEST_SIZE = 500 * 1024; // 500 KB
-export const ANALYSIS_TIMEOUT = 60_000; // 60 seconds
+export const ANALYSIS_TIMEOUT = 180_000; // 180 seconds (3 minutes)
 export const URL_FETCH_TIMEOUT = 10_000; // 10 seconds
 export const URL_MAX_SIZE = 2 * 1024 * 1024; // 2 MB
+export const JOB_OCR_TIMEOUT = 30_000; // 30 seconds
 
 export const SUPPORTED_FILE_TYPES = {
   "application/pdf": [".pdf"],
@@ -12,6 +13,14 @@ export const SUPPORTED_FILE_TYPES = {
 } as const;
 
 export const SUPPORTED_EXTENSIONS = [".pdf", ".docx", ".doc"];
+
+export const SUPPORTED_JOB_IMAGE_TYPES = {
+  "image/png": [".png"],
+  "image/jpeg": [".jpg", ".jpeg"],
+  "image/webp": [".webp"],
+} as const;
+
+export const SUPPORTED_JOB_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp"];
 
 export const DEFAULT_MODELS: Record<string, string> = {
   gemini: "gemini-2.0-flash",
