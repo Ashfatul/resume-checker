@@ -76,12 +76,14 @@ export default function ResultsPage() {
               <ScoreOverview score={analysisResult.overallScore} label={scoreLabel} />
             </div>
 
-            {/* Print-only header */}
-            <div className="hidden print:block text-center border-b pb-4">
+            {/* Print score header */}
+            <div className="print-only text-center border-b pb-4 mb-4">
               <h2 className="text-xl font-bold">ResumeChecker — Resume Analysis Report</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Overall Score: {analysisResult.overallScore}/100 — {scoreLabel}
-              </p>
+              <div className="mt-3 inline-flex items-center gap-2 rounded-full border px-4 py-1.5">
+                <span className="text-2xl font-bold">{analysisResult.overallScore}</span>
+                <span className="text-sm text-muted-foreground">/ 100</span>
+                <span className="text-sm font-medium ml-1">— {scoreLabel}</span>
+              </div>
             </div>
 
             <VerdictCard verdict={analysisResult.verdict} />

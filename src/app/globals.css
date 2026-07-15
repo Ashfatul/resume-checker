@@ -132,7 +132,14 @@
   }
 }
 
+.print-only {
+  display: none !important;
+}
+
 @media print {
+  .print-only {
+    display: block !important;
+  }
   @page {
     margin: 20mm 18mm;
     size: A4;
@@ -142,7 +149,8 @@
   .print\:hidden {
     display: none !important;
   }
-  .hidden.print\:block {
+  .hidden.print\:block,
+  .hidden.print\:\!block {
     display: block !important;
   }
   body {
